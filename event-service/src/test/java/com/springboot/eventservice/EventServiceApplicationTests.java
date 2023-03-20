@@ -3,6 +3,7 @@ package com.springboot.eventservice;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.assertions.Assertions;
 import com.springboot.eventservice.repository.EventRepository;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,13 +49,18 @@ class EventServiceApplicationTests {
 		Assertions.assertNotNull(eventRepository.findOneByName("World Cup final"));
 	}
 
+	@After
+	void reset() {
+
+	}
+
 	@Before
 	void setUp() {
 
 	}
 	@Test
 	void shouldGetAllEvents() throws Exception {
-
+		mockMvc.perform(MockMvcRequestBuilders.get("/event/all"));
 	}
 
 	private Event newEvent1 = Event.builder()
