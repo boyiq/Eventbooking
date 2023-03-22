@@ -14,10 +14,11 @@ import lombok.Setter;
 @NoArgsConstructor
 public class OrderItem {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    private String eventCode;
+    private String event_code;
 
     private Integer price;
 
