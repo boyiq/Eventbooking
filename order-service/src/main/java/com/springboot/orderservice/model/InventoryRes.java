@@ -1,4 +1,4 @@
-package com.springboot.inventoryservice.model;
+package com.springboot.orderservice.model;
 
 import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
