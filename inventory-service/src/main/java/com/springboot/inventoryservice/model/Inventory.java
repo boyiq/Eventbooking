@@ -11,7 +11,8 @@ public class Inventory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String event_code;
+    @Column(name = "event_code")
+    private String eventCode;
 
     private Integer stock_quantity;
 }

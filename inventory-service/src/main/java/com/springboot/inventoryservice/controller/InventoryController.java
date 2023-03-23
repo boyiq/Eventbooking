@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -17,10 +18,10 @@ public class InventoryController {
 
     private final InventoryService inventoryService;
     @GetMapping
-    private ResponseEntity<List<InventoryRes>> inStock(List<String> eventCodes) {
+    private ResponseEntity<List<InventoryRes>> inStock(@RequestParam List<String> eventCodes) {
         try {
             List<InventoryRes> inStockRes = inventoryService.checkStock(eventCodes);
-            return new ResponseEntity<List<InventoryRes>>(HttpStatus.OK);
+            return new ResponseEntity<>(inStockRes, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

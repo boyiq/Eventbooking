@@ -26,7 +26,7 @@ public class InventoryService {
             }
 
             InventoryRes result = InventoryRes.builder()
-                    .event_code(inventory.getEvent_code())
+                    .event_code(inventory.getEventCode())
                     .inStock(isInStock)
                     .build();
             resultList.add(result);
