@@ -2,12 +2,14 @@ package com.springboot.orderservice.controller;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.springboot.orderservice.service.OrderService;
 import com.springboot.orderservice.model.OrderItemReq;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 
@@ -17,7 +19,6 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
-
     @GetMapping
     private ResponseEntity<String> getTest() {
         try {

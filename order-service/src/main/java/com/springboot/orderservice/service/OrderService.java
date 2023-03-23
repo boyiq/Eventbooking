@@ -5,11 +5,15 @@ import com.springboot.orderservice.repository.OrderRepository;
 import com.springboot.orderservice.repository.OrderItemRepository;
 import com.springboot.orderservice.model.Order;
 import com.springboot.orderservice.model.OrderItemReq;
+import com.springboot.orderservice.model.InventoryRes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.List;
 
@@ -19,6 +23,9 @@ import java.util.List;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
+
+    @Autowired
+    private final WebClient webClient;
 
     public void createOrder(List<OrderItemReq> newItemsReqList) {
         Order order = new Order();
@@ -37,7 +44,24 @@ public class OrderService {
 
         order.setOrderItemList(orderItemList);
         order.setOrder_number(newOrderNumber);
-        order = orderRepository.save(order);
-        log.info("new order {} is saved", order.getOrder_number());
+
+        List<String> eventCodes = order.getOrderItemList().stream().map(OrderItem::getEvent_code).toList();
+
+        InventoryRes[] inventoryResList =  webClient.get()
+                .uri("http://localhost:8082/inventory", uriBuilder -> uriBuilder.queryParam("eventCodes", eventCodes).build())
+                .retrieve()
+                .bodyToMono(InventoryRes[].class)
+                .block();
+        assert inventoryResList != null;
+        boolean allInStock = Arrays.stream(inventoryResList).allMatch(InventoryRes::isInStock);
+
+        if (allInStock) {
+            order = orderRepository.save(order);
+            log.info("new order {} is placed", order.getOrder_number());
+        } else {
+            throw new IllegalArgumentException("Certain item in order not in stock");
+        }
+
+
     }
 }
