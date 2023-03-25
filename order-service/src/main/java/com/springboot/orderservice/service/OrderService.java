@@ -6,9 +6,11 @@ import com.springboot.orderservice.repository.OrderItemRepository;
 import com.springboot.orderservice.model.Order;
 import com.springboot.orderservice.model.OrderItemReq;
 import com.springboot.orderservice.model.InventoryRes;
+import com.springboot.orderservice.config.WebClientConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerWebClientBuilderBeanPostProcessor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -25,7 +27,7 @@ public class OrderService {
     private final OrderItemRepository orderItemRepository;
 
     @Autowired
-    private final WebClient webClient;
+    private final WebClient.Builder webClientBuilder;
 
     public void createOrder(List<OrderItemReq> newItemsReqList) {
         Order order = new Order();
@@ -47,8 +49,8 @@ public class OrderService {
 
         List<String> eventCodes = order.getOrderItemList().stream().map(OrderItem::getEvent_code).toList();
 
-        InventoryRes[] inventoryResList =  webClient.get()
-                .uri("http://localhost:8082/inventory", uriBuilder -> uriBuilder.queryParam("eventCodes", eventCodes).build())
+        InventoryRes[] inventoryResList =  webClientBuilder.build().get()
+                .uri("http://inventory-services/inventory", uriBuilder -> uriBuilder.queryParam("eventCodes", eventCodes).build())
                 .retrieve()
                 .bodyToMono(InventoryRes[].class)
                 .block();
