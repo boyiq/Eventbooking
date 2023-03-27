@@ -1,5 +1,6 @@
 package com.springboot.orderservice.service;
 
+import com.springboot.orderservice.event.OrderCompleteEvent;
 import com.springboot.orderservice.model.OrderItem;
 import com.springboot.orderservice.repository.OrderRepository;
 import com.springboot.orderservice.repository.OrderItemRepository;
@@ -10,7 +11,7 @@ import com.springboot.orderservice.config.WebClientConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerWebClientBuilderBeanPostProcessor;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -25,6 +26,7 @@ import java.util.List;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
+    private final KafkaTemplate<String, OrderCompleteEvent> kafkaTemplate;
 
     @Autowired
     private final WebClient.Builder webClientBuilder;
@@ -59,6 +61,7 @@ public class OrderService {
 
         if (allInStock) {
             order = orderRepository.save(order);
+            kafkaTemplate.send("notificationTopic", new OrderCompleteEvent(order.getOrder_number()));
             log.info("new order {} is placed", order.getOrder_number());
         } else {
             throw new IllegalArgumentException("Certain item in order not in stock");
