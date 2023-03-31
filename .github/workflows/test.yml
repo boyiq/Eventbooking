@@ -29,6 +29,6 @@ jobs:
 #        run: mvn test -Dtest=com.springboot.eventservice.EventServiceApplicationTests
         run: |
           cd event-service
-          ./mvn test
+          mvn test
         env:
           SPRING_DATA_MONGODB_URI: mongodb://localhost:27017/event-service # sets the MongoDB URI for the tests to use
