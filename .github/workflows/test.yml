@@ -14,7 +14,9 @@ jobs:
         ports:
           - 27017:27017
     steps:
-      - uses: actions/checkout@v2 # checks out the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v2 # checks out the code from the repository
+
       - name: Set up Java 19 # sets up Java 11 on the runner
         uses: actions/setup-java@v2
         with:
@@ -22,7 +24,9 @@ jobs:
           distribution: adopt
       - name: Build project # builds the project with Maven and skips the tests
         run: mvn clean install -DskipTests=true
+
       - name: Run integration tests # runs the integration tests with Maven
-        run: mvn test -Dtest=com.springboot.eventservice.EventServiceApplicationTests
+#        run: mvn test -Dtest=com.springboot.eventservice.EventServiceApplicationTests
+        run: mvn test
         env:
           SPRING_DATA_MONGODB_URI: mongodb://localhost:27017/event-service # sets the MongoDB URI for the tests to use
