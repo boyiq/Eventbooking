@@ -34,7 +34,7 @@ public class OrderController {
             orderService.createOrder(newItemsList);
             return new ResponseEntity<>("New order placed", HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>("Failed to place order" + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Failed to place order" + e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
